@@ -7,3 +7,5 @@ FROM scratch
 WORKDIR /app
 COPY --from=buildando /app/goapp /app
 CMD ["./goapp"]
+
+# https://hub.docker.com/repository/docker/ricmed/gocodeeducation
