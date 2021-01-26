@@ -6,7 +6,8 @@ Apache Spark 2.4.7 - Pre build foa Apache Hadoop 2.7
 
 Java JDK 11.0.28
 
-Para realeases futuros, quero automatizar a inicialização do Jupyter Notebook e verificar uma possível redução do tamanho da imagem, assim como criar um dockerfile.
+Para realeases futuros, quero automatizar a inicialização do Jupyter Notebook e verificar uma possível redução do tamanho da imagem, assim como criar um dockerfile 
+Como estava com pressa, utilizei a imagem do Ubunu como base e fiz a instalação das ferramentas conforme as explicações dadas no curso e fiz um docker commit para gerar uma nova imagem.
 
 Endereço no DockerHub: https://hub.docker.com/repository/docker/ricmed/ambiente-dsa
 
