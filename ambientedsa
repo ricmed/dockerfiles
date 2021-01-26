@@ -1,0 +1,20 @@
+Ambiente de desenvolvimento para acompannhar as aulas do curso: Big Data Real-Time Analytics com Python e Spark da Data Science Academy
+
+Anaconda 2019.03
+
+Apache Spark 2.4.7 - Pre build foa Apache Hadoop 2.7 
+
+Java JDK 11.0.28
+
+Para realeases futuros, quero automatizar a inicialização do Jupyter Notebook e verificar uma possível redução do tamanho da imagem, assim como criar um dockerfile.
+
+Endereço no DockerHub: https://hub.docker.com/repository/docker/ricmed/ambiente-dsa
+
+Para buildar esta imagem na sua máquina:
+docker run -it -p 8888:8888 --name ambienteDSA ricmed/ambiente-dsa:v3.0 bash
+
+Para inicializar o jupyter notebook:
+jupyter notebook --ip='0.0.0.0' --port=8888 --allow-root --no-browser
+
+Para acessar o jupyter notebook:
+http://localhost:8888
