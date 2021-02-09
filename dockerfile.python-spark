@@ -1,0 +1,69 @@
+FROM ubuntu:latest
+
+LABEL maintainer='Ricardo Medeiros<ricmed@gmail.com>'
+# Updating Ubuntu packages
+RUN apt-get update && \
+    apt-get -y upgrade && \
+    apt-get -y install wget bzip2 gnupg ca-certificates libxext6 libsm6 libxrender1
+
+# Add sudo
+RUN apt-get install -y sudo
+
+# Add user ubuntu with no password, add to sudo group
+RUN adduser --disabled-password --gecos '' ubuntu && \
+    adduser ubuntu sudo && \
+    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+USER ubuntu
+WORKDIR /home/ubuntu/
+RUN chmod a+rwx /home/ubuntu/ && \
+    mkdir /home/ubuntu/notebooks && mkdir /home/ubuntu/opt/
+
+RUN sudo apt-get install -y systemd
+
+ENV locale-gen pt_BR.UTF-8
+ENV set-timezone America/Belem
+
+#ARG DEBIAN_FRONTEND=noninteractive
+
+
+# Java install
+RUN wget https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz
+RUN tar -xvf openjdk-11.0.2_linux-x64_bin.tar.gz
+RUN mv jdk-11.0.2 /home/ubuntu/opt/jdk11
+
+# Apache Spark install
+RUN wget https://archive.apache.org/dist/spark/spark-2.4.2/spark-2.4.2-bin-hadoop2.7.tgz
+RUN tar -xvf spark-2.4.2-bin-hadoop2.7.tgz
+RUN mv spark-2.4.2-bin-hadoop2.7 /home/ubuntu/opt/spark
+
+# Anaconda installing
+RUN wget https://repo.continuum.io/archive/Anaconda3-2019.03-Linux-x86_64.sh
+RUN bash Anaconda3-2019.03-Linux-x86_64.sh -b
+RUN rm Anaconda3-2019.03-Linux-x86_64.sh
+
+# path do Java
+ENV PATH JAVA_HOME=/home/ubuntu/opt/jdk11
+ENV PATH PATH=$PATH:$JAVA_HOME/bin
+
+# set path to spark
+ENV PATH SPARK_HOME=/home/ubuntu/opt/spark
+ENV PATH PATH=$PATH:$SPARK_HOME/bin
+ENV PATH PYSPARK_DRIVER_PYTHON=jupyter
+ENV PATH PYSPARK_DRIVER_PYTHON_OPTS=notebook
+ENV PATH PYSPARK_PYTHON=python3
+
+ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/ubuntu/anaconda3/bin
+
+# Updating Anaconda packages
+RUN conda update conda
+# o comando abaixo demora para ser completamente executado
+# RUN conda update anaconda
+
+# Configuring access to Jupyter
+RUN jupyter notebook --generate-config --allow-root && \
+    echo "c.NotebookApp.password = u'sha1:6a3f528eec40:6e896b6e4828f525a6e20e5411cd1c8075d68619'" >> /home/ubuntu/.jupyter/jupyter_notebook_config.py
+
+EXPOSE 8888
+
+# Run Jupyter lab as Docker main process
+CMD ["jupyter", "notebook", "--allow-root", "--notebook-dir=/home/ubuntu/notebooks", "--ip='0.0.0.0'", "--port=8888", "--no-browser"]
